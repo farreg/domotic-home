@@ -1,0 +1,22 @@
+version: '3'
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ${HA_CONFIG_PATH}:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+
+  node-red:
+    image: nodered/node-red:latest
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+    ports:
+      - "1880:1880"
+    volumes:
+      - ${NR_DATA_PATH}:/data
