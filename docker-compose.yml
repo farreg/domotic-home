@@ -20,3 +20,14 @@ services:
       - "1880:1880"
     volumes:
       - ${NR_DATA_PATH}:/data
+
+  mqtt:
+    container_name: mosquitto
+    image: eclipse-mosquitto:2.0.15
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ${MQTT_CONFIG_PATH}:/mqtt/config
+      - ${MQTT_LOG_PATH}:/mqtt/log
+      - ${MQTT_DATA_PATH}:/mqtt/data
