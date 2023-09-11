@@ -6,11 +6,14 @@ services:
     volumes:
       - ${HA_CONFIG_PATH}:/config
       - /etc/localtime:/etc/localtime:ro
+      - ./homeassistant/hacs/init_script.sh:/config/init_script.sh
+      
     environment:
       - TZ=America/Argentina/Buenos_Aires
     restart: unless-stopped
     privileged: true
     network_mode: host
+    command: /bin/bash -c "chmod +x /config/init_script.sh; /config/init_script.sh; python -m homeassistant --config /config"
 
   node-red:
     image: nodered/node-red:latest
