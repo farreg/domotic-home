@@ -2,7 +2,7 @@ version: '3'
 services:
   homeassistant:
     container_name: homeassistant
-    image: "ghcr.io/home-assistant/home-assistant:stable"
+    image: "ghcr.io/home-assistant/home-assistant:latest"
     volumes:
       - ${HA_CONFIG_PATH}:/config
       - /etc/localtime:/etc/localtime:ro
@@ -14,15 +14,6 @@ services:
     privileged: true
     network_mode: host
     command: /bin/bash -c "chmod +x /config/init_script.sh; /config/init_script.sh; python -m homeassistant --config /config"
-
-  node-red:
-    image: nodered/node-red:latest
-    environment:
-      - TZ=America/Argentina/Buenos_Aires
-    ports:
-      - "1880:1880"
-    volumes:
-      - ${NR_DATA_PATH}:/data
 
   mqtt:
     container_name: mosquitto
