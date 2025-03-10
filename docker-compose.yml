@@ -31,8 +31,9 @@ services:
       - TZ=America/Argentina/Buenos_Aires
       - MQTT_USERNAME=${MQTT_USERNAME}
       - MQTT_PASSWORD=${MQTT_PASSWORD}
+      - ZIGBEE_ADAPTER_TTY=${ZIGBEE_ADAPTER_TTY:-/dev/ttyUSB0}
     devices:
-      - /dev/ttyUSB0:/dev/ttyUSB0
+      - ${ZIGBEE_ADAPTER_TTY:-/dev/ttyUSB0}:${ZIGBEE_ADAPTER_TTY:-/dev/ttyUSB0}
     depends_on:
       - mqtt
 

@@ -16,6 +16,7 @@ Un proyecto de domótica basado en Home Assistant para automatizar y controlar d
 - **Temas personalizados**: Incluye tema oscuro predeterminado
 - **Scripts de automatización**: Instalación de HACS y detección de adaptadores Zigbee
 - **Configuración predefinida**: Ejemplos educativos de automaciones, scripts y escenas
+- **Detección automática**: Soporte para diferentes tipos de adaptadores Zigbee USB
 
 ## Requisitos
 
@@ -32,6 +33,7 @@ Un proyecto de domótica basado en Home Assistant para automatizar y controlar d
   - `HA_GITHUB_TOKEN`: Token de GitHub para HACS
   - `MQTT_USERNAME`: Usuario para autenticación MQTT
   - `MQTT_PASSWORD`: Contraseña para autenticación MQTT
+  - `ZIGBEE_ADAPTER_TTY`: Ruta al dispositivo del adaptador Zigbee (ej. `/dev/ttyACM0` o `/dev/ttyUSB0`)
 
 ## Instalación
 
@@ -51,8 +53,11 @@ Un proyecto de domótica basado en Home Assistant para automatizar y controlar d
    cd scripts
    ./configure_zigbee.sh
    cd ..
-   docker-compose restart zigbee2mqtt
+   docker-compose down
+   docker-compose up -d
    ```
+   Este script detectará automáticamente tu adaptador Zigbee y configurará la variable `ZIGBEE_ADAPTER_TTY` en el archivo `.env`.
+
 7. Acceder a los servicios:
    - Home Assistant: `http://[IP-RASPBERRY]:8123`
    - Zigbee2MQTT: `http://[IP-RASPBERRY]:8080`
@@ -103,6 +108,25 @@ Para realizar copias de seguridad de forma segura:
 - Usar una tarjeta SD de alta calidad (clase 10 o superior) o preferiblemente un SSD USB
 - Asegurar que la Raspberry Pi tenga buena ventilación
 - Realizar copias de seguridad periódicas con la función de snapshots de Home Assistant
+
+## Solución de problemas con adaptadores Zigbee
+
+Si encuentras problemas con la detección automática del adaptador Zigbee:
+
+1. **Verificar la conexión física**: Asegúrate de que el adaptador esté correctamente conectado
+2. **Identificar manualmente el adaptador**:
+   ```bash
+   ls -l /dev/ttyUSB*
+   ls -l /dev/ttyACM*
+   dmesg | grep -i tty
+   ```
+3. **Configurar manualmente**:
+   - Edita el archivo `.env` y establece `ZIGBEE_ADAPTER_TTY` a la ruta correcta
+   - Reinicia los servicios: `docker-compose down && docker-compose up -d`
+4. **Permisos de dispositivo**: Si hay problemas de acceso, asegúrate de que el usuario docker tenga permisos:
+   ```bash
+   sudo chmod 666 /dev/ttyXXX  # donde XXX es la ruta correcta
+   ```
 
 ## Mantenimiento
 

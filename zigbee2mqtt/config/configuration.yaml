@@ -6,7 +6,7 @@ mqtt:
   user: "${MQTT_USERNAME}"
   password: "${MQTT_PASSWORD}"
 serial:
-  port: /dev/ttyUSB0
+  port: "${ZIGBEE_ADAPTER_TTY:-/dev/ttyUSB0}"
   adapter: ezsp
 frontend:
   port: 8080
