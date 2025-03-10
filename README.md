@@ -72,8 +72,60 @@ Recomendaciones adicionales:
 - Asegurar la red donde se encuentra la Raspberry Pi
 - NO almacenar información sensible en repositorios públicos
 
+## Gestión de datos y backups
+
+Este repositorio está configurado para excluir datos sensibles mediante .gitignore:
+
+- **Archivos de configuración**: El archivo `.env` con credenciales no se almacena en el repositorio
+- **Datos de dispositivos**: La información de dispositivos Zigbee y sus claves está excluida
+- **Logs y bases de datos**: Los archivos de registro y bases de datos están excluidos
+
+Para realizar copias de seguridad de forma segura:
+
+1. **Configuración de Home Assistant**:
+   ```bash
+   # Copia de seguridad de configuración, excluyendo datos sensibles
+   tar --exclude='.storage' --exclude='secrets.yaml' -czvf ha_config_backup.tar.gz ./volumes/homeassistant
+   ```
+
+2. **Backup completo desde Home Assistant**:
+   - Usa la función de "Snapshots" nativa de Home Assistant
+   - Almacena estos backups en un lugar seguro, fuera del repositorio
+
+3. **Claves Zigbee**:
+   ```bash
+   # Copia de seguridad de datos Zigbee (importante para preservar emparejamientos)
+   tar -czvf zigbee_data_backup.tar.gz ./zigbee2mqtt/data
+   ```
+
 ## Recomendaciones para Raspberry Pi
 
 - Usar una tarjeta SD de alta calidad (clase 10 o superior) o preferiblemente un SSD USB
 - Asegurar que la Raspberry Pi tenga buena ventilación
 - Realizar copias de seguridad periódicas con la función de snapshots de Home Assistant
+
+## Mantenimiento
+
+Para mantener el sistema actualizado y seguro:
+
+1. Actualizar los contenedores regularmente:
+   ```bash
+   docker-compose pull
+   docker-compose up -d
+   ```
+
+2. Revisar los logs periódicamente:
+   ```bash
+   docker-compose logs -f homeassistant
+   docker-compose logs -f zigbee2mqtt
+   docker-compose logs -f mqtt
+   ```
+
+3. Monitorear el uso de recursos:
+   ```bash
+   docker stats
+   ```
+
+4. Limpiar datos antiguos periódicamente:
+   - Usar la función de purga de historial de Home Assistant
+   - Eliminar logs antiguos de Mosquitto y Zigbee2MQTT

@@ -1,1 +1,26 @@
+# Archivos de entorno y configuración
 .env
+*.env
+*.log
+
+# Directorios de datos y caché
+/output/
+/reports/
+/volumes/**/data/
+/volumes/**/log/
+/zigbee2mqtt/data/
+
+# Archivos generados por el sistema operativo
+.DS_Store
+Thumbs.db
+.Trash-*
+
+# Archivos de claves y certificados
+*.key
+*.pem
+*.crt
+*.cert
+
+# Datos específicos de usuarios
+HomeAssistant/secrets.yaml
+HomeAssistant/.storage/
