@@ -1,0 +1,35 @@
+# Tema oscuro personalizado para Home Assistant
+
+oscuro:
+  # Colores principales
+  primary-color: "#2980b9"
+  accent-color: "#16a085"
+  dark-primary-color: "#1b5e20"
+  light-primary-color: "#4caf50"
+  
+  # Tarjetas
+  card-background-color: "#263238"
+  paper-card-background-color: "#263238"
+  paper-card-header-color: "#16a085"
+  
+  # Modo oscuro
+  primary-background-color: "#121212"
+  secondary-background-color: "#1e1e1e"
+  primary-text-color: "#ffffff"
+  secondary-text-color: "#b8b8b8"
+  
+  # Elementos específicos
+  switch-checked-color: "#16a085"
+  switch-unchecked-color: "#78909c"
+  switch-checked-button-color: "#ffffff"
+  switch-unchecked-button-color: "#ffffff"
+  
+  # Otros elementos
+  state-icon-color: "#16a085"
+  state-icon-active-color: "#ffffff"
+  state-icon-unavailable-color: "#8e8e8e"
+  
+  # Etiquetas
+  label-badge-background-color: "#263238"
+  label-badge-text-color: "#ffffff"
+  label-badge-red: "#e74c3c" 

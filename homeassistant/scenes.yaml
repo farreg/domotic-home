@@ -1,0 +1,17 @@
+# Escenas
+# Aquí se incluirán las escenas de Home Assistant
+# Consulta la documentación: https://www.home-assistant.io/docs/scene/
+
+# Ejemplo: Escena para el modo noche
+- id: modo_noche
+  name: Modo Noche
+  description: Configura las luces para el modo nocturno
+  entities:
+    light.ejemplo_luz_1:
+      state: on
+      brightness_pct: 30
+      rgb_color: [255, 150, 50]
+    light.ejemplo_luz_2:
+      state: off
+
+# Agrega tus escenas personalizadas aquí 

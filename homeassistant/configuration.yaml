@@ -1,2 +1,58 @@
+# Configuración principal de Home Assistant
+# https://www.home-assistant.io/docs/configuration/
+
+# Configuración general
+default_config:
+
+# Idioma y zona horaria
+homeassistant:
+  name: Mi Casa
+  latitude: -34.603722
+  longitude: -58.381592
+  elevation: 25
+  unit_system: metric
+  time_zone: America/Argentina/Buenos_Aires
+  currency: ARS
+  country: AR
+  language: es
+
+# HACS - Home Assistant Community Store
 hacs:
   token: ${HA_GITHUB_TOKEN}
+
+# Configuración MQTT
+mqtt:
+  broker: mqtt
+  port: 1883
+  client_id: home_assistant
+  username: ${MQTT_USERNAME}
+  password: ${MQTT_PASSWORD}
+  discovery: true
+  discovery_prefix: homeassistant
+
+# API, Interfaz y Temas
+api:
+frontend:
+  themes: !include_dir_merge_named themes
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 127.0.0.1
+    - ::1
+
+# Registro de actividad e historial
+recorder:
+  purge_keep_days: 30
+  db_url: sqlite:///config/home-assistant_v2.db
+history:
+logbook:
+
+# Zigbee - Configuración automática a través de MQTT
+# No requiere configuración adicional si se usa Zigbee2MQTT
+
+# ESPHome - Integración automática
+
+# Personalización
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml

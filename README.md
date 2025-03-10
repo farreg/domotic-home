@@ -10,6 +10,13 @@ Un proyecto de domótica basado en Home Assistant para automatizar y controlar d
 - **MQTT (Mosquitto)**: Broker para comunicación entre dispositivos con autenticación segura
 - **HACS**: Home Assistant Community Store para instalar integraciones adicionales
 
+## Características
+
+- **Seguridad**: Autenticación MQTT, limitación de conexiones
+- **Temas personalizados**: Incluye tema oscuro predeterminado
+- **Scripts de automatización**: Instalación de HACS y detección de adaptadores Zigbee
+- **Configuración predefinida**: Automaciones, scripts y escenas de ejemplo
+
 ## Requisitos
 
 - Raspberry Pi 4 (recomendado 4GB+ RAM)
@@ -34,11 +41,17 @@ Un proyecto de domótica basado en Home Assistant para automatizar y controlar d
 4. Ejecutar `docker-compose up -d`
 5. Generar el archivo de contraseñas para MQTT:
    ```
-   docker exec mosquitto mosquitto_passwd -c /mqtt/config/passwd $MQTT_USERNAME
-   ```
-6. Reiniciar el contenedor de Mosquitto:
-   ```
+   cd scripts
+   ./generate_mqtt_passwd.sh
+   cd ..
    docker-compose restart mqtt
+   ```
+6. Configurar automáticamente el adaptador Zigbee:
+   ```
+   cd scripts
+   ./configure_zigbee.sh
+   cd ..
+   docker-compose restart zigbee2mqtt
    ```
 7. Acceder a los servicios:
    - Home Assistant: `http://[IP-RASPBERRY]:8123`

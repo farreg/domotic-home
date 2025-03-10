@@ -1,0 +1,19 @@
+# Automaciones
+# Aquí se incluirán las automaciones de Home Assistant
+# Consulta la documentación: https://www.home-assistant.io/docs/automation/
+
+# Ejemplo: Notificación de bienvenida cuando Home Assistant inicia
+- id: 'sistema_iniciado'
+  alias: 'Sistema iniciado'
+  description: 'Envía una notificación cuando Home Assistant se inicia'
+  trigger:
+    - platform: homeassistant
+      event: start
+  condition: []
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "Sistema iniciado"
+        message: "Home Assistant se ha iniciado correctamente a las {{ now().strftime('%H:%M:%S') }}"
+
+# Agrega tus automaciones personalizadas aquí 

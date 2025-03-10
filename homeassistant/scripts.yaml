@@ -1,0 +1,22 @@
+# Scripts
+# Aquí se incluirán los scripts de Home Assistant
+# Consulta la documentación: https://www.home-assistant.io/docs/scripts/
+
+# Ejemplo: Script para enviar notificaciones
+notificar_evento:
+  alias: Notificar Evento
+  description: Envía una notificación con un mensaje personalizado
+  fields:
+    titulo:
+      description: Título de la notificación
+      example: Alerta
+    mensaje:
+      description: Mensaje a enviar
+      example: Este es un mensaje de prueba
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "{{ titulo }}"
+        message: "{{ mensaje }}"
+
+# Agrega tus scripts personalizados aquí 
