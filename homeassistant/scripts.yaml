@@ -2,21 +2,51 @@
 # Aquí se incluirán los scripts de Home Assistant
 # Consulta la documentación: https://www.home-assistant.io/docs/scripts/
 
-# Ejemplo: Script para enviar notificaciones
-notificar_evento:
-  alias: Notificar Evento
-  description: Envía una notificación con un mensaje personalizado
+# Ejemplos de scripts para Home Assistant
+# IMPORTANTE: Este archivo solo contiene ejemplos con fines educativos.
+# Se recomienda crear tus propios scripts específicos en la interfaz web
+# o mantener archivos de configuración privados.
+#
+# Para más información: https://www.home-assistant.io/docs/scripts/
+
+# Ejemplo 1: Script para enviar una notificación personalizada
+ejemplo_notificacion:
+  alias: "Ejemplo: Enviar notificación"
+  description: "Ejemplo educativo - Envía una notificación con un mensaje personalizable"
   fields:
     titulo:
       description: Título de la notificación
       example: Alerta
     mensaje:
       description: Mensaje a enviar
-      example: Este es un mensaje de prueba
+      example: Este es un mensaje de ejemplo
   sequence:
     - service: persistent_notification.create
       data:
         title: "{{ titulo }}"
         message: "{{ mensaje }}"
 
-# Agrega tus scripts personalizados aquí 
+# Ejemplo 2: Script para secuencia de acciones
+ejemplo_secuencia:
+  alias: "Ejemplo: Secuencia de acciones"
+  description: "Ejemplo educativo - Ejecuta una secuencia de acciones"
+  sequence:
+    - delay:
+        seconds: 1
+    - service: persistent_notification.create
+      data:
+        title: "Acción 1"
+        message: "Ejemplo de primera acción en secuencia"
+    - delay:
+        seconds: 2
+    - service: persistent_notification.create
+      data:
+        title: "Acción 2"
+        message: "Ejemplo de segunda acción en secuencia"
+
+# ════════════════════════════════════════════════════════════
+# PARA PERSONALIZAR:
+# 1. Crea tus scripts desde la interfaz web de Home Assistant
+# 2. Usa scripts para simplificar automatizaciones complejas
+# 3. Configura los scripts según las necesidades específicas de tu hogar
+# ════════════════════════════════════════════════════════════ 

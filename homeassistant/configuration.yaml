@@ -1,6 +1,10 @@
 # Configuración principal de Home Assistant
 # https://www.home-assistant.io/docs/configuration/
 
+# IMPORTANTE: Los archivos automations.yaml, scripts.yaml y scenes.yaml contienen 
+# solo ejemplos educativos. Se recomienda crear tus propias configuraciones directamente 
+# en la interfaz web de Home Assistant para mayor seguridad.
+
 # Configuración general
 default_config:
 
@@ -52,7 +56,7 @@ logbook:
 
 # ESPHome - Integración automática
 
-# Personalización
+# Personalización - Archivos de ejemplo
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml

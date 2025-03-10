@@ -1,19 +1,47 @@
-# Automaciones
-# Aquí se incluirán las automaciones de Home Assistant
-# Consulta la documentación: https://www.home-assistant.io/docs/automation/
+# Ejemplos de automatizaciones para Home Assistant
+# IMPORTANTE: Este archivo solo contiene ejemplos con fines educativos.
+# Se recomienda crear tus propias automatizaciones específicas en la interfaz web
+# o mantener archivos de configuración privados.
+#
+# Para más información: https://www.home-assistant.io/docs/automation/
 
-# Ejemplo: Notificación de bienvenida cuando Home Assistant inicia
-- id: 'sistema_iniciado'
-  alias: 'Sistema iniciado'
-  description: 'Envía una notificación cuando Home Assistant se inicia'
+# Ejemplo 1: Notificación simple al iniciar Home Assistant
+- id: 'ejemplo_notificacion_inicio'
+  alias: 'Ejemplo: Notificación de inicio'
+  description: 'Ejemplo educativo - Envía una notificación cuando inicia el sistema'
   trigger:
     - platform: homeassistant
       event: start
-  condition: []
   action:
     - service: persistent_notification.create
       data:
-        title: "Sistema iniciado"
-        message: "Home Assistant se ha iniciado correctamente a las {{ now().strftime('%H:%M:%S') }}"
+        title: "Ejemplo"
+        message: "Esta es una notificación de ejemplo"
 
-# Agrega tus automaciones personalizadas aquí 
+# Ejemplo 2: Automatización basada en tiempo
+- id: 'ejemplo_tiempo'
+  alias: 'Ejemplo: Acción programada'
+  description: 'Ejemplo educativo - Ejecuta una acción en un momento específico'
+  trigger:
+    - platform: time
+      at: '07:30:00'
+  condition:
+    - condition: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "Buenos días"
+        message: "Este es un ejemplo de acción programada"
+
+# ════════════════════════════════════════════════════════════
+# PARA PERSONALIZAR:
+# 1. Crea tus automatizaciones desde la interfaz web de Home Assistant
+# 2. Usa la integración con Google Assistant, Alexa u otros servicios
+# 3. Configura las automatizaciones según las necesidades específicas de tu hogar
+# ════════════════════════════════════════════════════════════ 

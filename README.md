@@ -15,7 +15,7 @@ Un proyecto de domótica basado en Home Assistant para automatizar y controlar d
 - **Seguridad**: Autenticación MQTT, limitación de conexiones
 - **Temas personalizados**: Incluye tema oscuro predeterminado
 - **Scripts de automatización**: Instalación de HACS y detección de adaptadores Zigbee
-- **Configuración predefinida**: Automaciones, scripts y escenas de ejemplo
+- **Configuración predefinida**: Ejemplos educativos de automaciones, scripts y escenas
 
 ## Requisitos
 
@@ -60,11 +60,17 @@ Un proyecto de domótica basado en Home Assistant para automatizar y controlar d
 
 ## Seguridad
 
-Este proyecto implementa seguridad básica con autenticación MQTT. Se recomienda:
+Este proyecto implementa varias medidas de seguridad:
 
+- **Autenticación MQTT**: Protección con usuario y contraseña
+- **Ejemplos genéricos**: Los archivos de automatizaciones, escenas y scripts contienen solo ejemplos educativos sin información personal
+- **Configuración privada**: Se recomienda crear tus automatizaciones personalizadas directamente en la interfaz de Home Assistant
+
+Recomendaciones adicionales:
 - Usar contraseñas fuertes para MQTT
 - Cambiar regularmente las contraseñas
 - Asegurar la red donde se encuentra la Raspberry Pi
+- NO almacenar información sensible en repositorios públicos
 
 ## Recomendaciones para Raspberry Pi
 

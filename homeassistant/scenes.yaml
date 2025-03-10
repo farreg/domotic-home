@@ -1,17 +1,40 @@
-# Escenas
-# Aquí se incluirán las escenas de Home Assistant
-# Consulta la documentación: https://www.home-assistant.io/docs/scene/
+# Ejemplos de escenas para Home Assistant
+# IMPORTANTE: Este archivo solo contiene ejemplos con fines educativos.
+# Se recomienda crear tus propias escenas específicas en la interfaz web
+# o mantener archivos de configuración privados.
+#
+# Para más información: https://www.home-assistant.io/docs/scene/
 
-# Ejemplo: Escena para el modo noche
-- id: modo_noche
-  name: Modo Noche
-  description: Configura las luces para el modo nocturno
+# Ejemplo 1: Escena básica para iluminación
+- id: ejemplo_escena_luz
+  name: "Ejemplo: Luces de lectura"
+  description: "Ejemplo educativo - Configura las luces para lectura"
   entities:
-    light.ejemplo_luz_1:
+    light.ejemplo_sala:
       state: on
-      brightness_pct: 30
-      rgb_color: [255, 150, 50]
-    light.ejemplo_luz_2:
+      brightness_pct: 70
+      color_temp: 400
+    light.ejemplo_secundaria:
       state: off
 
-# Agrega tus escenas personalizadas aquí 
+# Ejemplo 2: Escena para modo cine
+- id: ejemplo_escena_cine
+  name: "Ejemplo: Modo cine"
+  description: "Ejemplo educativo - Configura el ambiente para ver películas"
+  entities:
+    light.ejemplo_sala:
+      state: on
+      brightness_pct: 15
+      rgb_color: [30, 0, 180]
+    light.ejemplo_comedor:
+      state: off
+    media_player.ejemplo_tv:
+      state: on
+      source: HDMI1
+
+# ════════════════════════════════════════════════════════════
+# PARA PERSONALIZAR:
+# 1. Crea tus escenas desde la interfaz web de Home Assistant
+# 2. Usa escenas para configurar varios dispositivos a la vez
+# 3. Integra las escenas con automatizaciones y asistentes de voz
+# ════════════════════════════════════════════════════════════ 
