@@ -6,12 +6,15 @@ mqtt:
   user: "${MQTT_USERNAME}"
   password: "${MQTT_PASSWORD}"
 serial:
-  port: "${ZIGBEE_ADAPTER_TTY:-/dev/ttyUSB0}"
+  port: "${ZIGBEE_ADAPTER_TTY:-/dev/ttyACM0}"
   adapter: ezsp
 frontend:
   port: 8080
 advanced:
   log_level: info
   network_key: GENERATE
+  adapter:
+    ezsp:
+      version: 8
 devices: 
   # Los dispositivos apareados aparecerán aquí automáticamente 
