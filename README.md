@@ -7,7 +7,7 @@ Un proyecto de domótica basado en Home Assistant para automatizar y controlar d
 - **Home Assistant**: Plataforma principal de domótica (versión latest)
 - **Zigbee2MQTT**: Para gestionar dispositivos Zigbee a través del adaptador Sonoff
 - **ESPHome**: Para programar y gestionar dispositivos basados en ESP8266/ESP32
-- **MQTT (Mosquitto)**: Broker para comunicación entre dispositivos
+- **MQTT (Mosquitto)**: Broker para comunicación entre dispositivos con autenticación segura
 - **HACS**: Home Assistant Community Store para instalar integraciones adicionales
 
 ## Requisitos
@@ -23,17 +23,35 @@ Un proyecto de domótica basado en Home Assistant para automatizar y controlar d
   - `ZIGBEE2MQTT_DATA`: Directorio para datos de Zigbee2MQTT
   - `ESPHOME_CONFIG`: Directorio para configuración de ESPHome
   - `HA_GITHUB_TOKEN`: Token de GitHub para HACS
+  - `MQTT_USERNAME`: Usuario para autenticación MQTT
+  - `MQTT_PASSWORD`: Contraseña para autenticación MQTT
 
 ## Instalación
 
 1. Clonar el repositorio
-2. Configurar las variables de entorno en un archivo `.env`
+2. Configurar las variables de entorno en un archivo `.env` (usar `.env.example` como referencia)
 3. Conectar el adaptador Sonoff Zigbee USB a la Raspberry Pi
 4. Ejecutar `docker-compose up -d`
-5. Acceder a los servicios:
+5. Generar el archivo de contraseñas para MQTT:
+   ```
+   docker exec mosquitto mosquitto_passwd -c /mqtt/config/passwd $MQTT_USERNAME
+   ```
+6. Reiniciar el contenedor de Mosquitto:
+   ```
+   docker-compose restart mqtt
+   ```
+7. Acceder a los servicios:
    - Home Assistant: `http://[IP-RASPBERRY]:8123`
    - Zigbee2MQTT: `http://[IP-RASPBERRY]:8080`
    - ESPHome: `http://[IP-RASPBERRY]:6052`
+
+## Seguridad
+
+Este proyecto implementa seguridad básica con autenticación MQTT. Se recomienda:
+
+- Usar contraseñas fuertes para MQTT
+- Cambiar regularmente las contraseñas
+- Asegurar la red donde se encuentra la Raspberry Pi
 
 ## Recomendaciones para Raspberry Pi
 

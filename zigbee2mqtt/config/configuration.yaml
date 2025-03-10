@@ -3,6 +3,8 @@ permit_join: false
 mqtt:
   base_topic: zigbee2mqtt
   server: mqtt://mqtt:1883
+  user: "${MQTT_USERNAME}"
+  password: "${MQTT_PASSWORD}"
 serial:
   port: /dev/ttyUSB0
   adapter: ezsp

@@ -11,6 +11,8 @@ services:
     environment:
       - TZ=America/Argentina/Buenos_Aires
       - PYTHONUNBUFFERED=1
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
     restart: unless-stopped
     privileged: true
     network_mode: host
@@ -27,6 +29,8 @@ services:
       - "8080:8080"
     environment:
       - TZ=America/Argentina/Buenos_Aires
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
     depends_on:

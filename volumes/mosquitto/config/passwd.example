@@ -1,0 +1,8 @@
+# Este es un archivo de ejemplo. El archivo real de contraseñas será generado 
+# por el script scripts/generate_mqtt_passwd.sh o por el comando:
+# docker exec mosquitto mosquitto_passwd -c /mqtt/config/passwd homeassistant
+#
+# El formato del archivo es:
+# usuario:contraseña_encriptada
+#
+# No modifiques este archivo directamente, usa el script o comando proporcionado. 
