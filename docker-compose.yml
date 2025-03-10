@@ -10,14 +10,40 @@ services:
       
     environment:
       - TZ=America/Argentina/Buenos_Aires
+      - PYTHONUNBUFFERED=1
     restart: unless-stopped
     privileged: true
     network_mode: host
     command: /bin/bash -c "chmod +x /config/init_script.sh; /config/init_script.sh; python -m homeassistant --config /config"
 
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt:latest
+    restart: unless-stopped
+    volumes:
+      - ${ZIGBEE2MQTT_DATA}:/app/data
+      - /run/udev:/run/udev:ro
+    ports:
+      - "8080:8080"
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    depends_on:
+      - mqtt
+
+  esphome:
+    container_name: esphome
+    image: ghcr.io/esphome/esphome:latest
+    volumes:
+      - ${ESPHOME_CONFIG}:/config
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+
   mqtt:
     container_name: mosquitto
-    image: eclipse-mosquitto:2.0.15
+    image: eclipse-mosquitto:latest
     ports:
       - "1883:1883"
       - "9001:9001"

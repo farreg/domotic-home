@@ -1,0 +1,15 @@
+homeassistant: true
+permit_join: false
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://mqtt:1883
+serial:
+  port: /dev/ttyUSB0
+  adapter: ezsp
+frontend:
+  port: 8080
+advanced:
+  log_level: info
+  network_key: GENERATE
+devices: 
+  # Los dispositivos apareados aparecerán aquí automáticamente 
