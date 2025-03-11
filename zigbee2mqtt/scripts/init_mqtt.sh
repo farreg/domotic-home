@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Script para asegurar que la configuración de MQTT sea correcta
 # Este script se ejecutará al inicio del contenedor Zigbee2MQTT
