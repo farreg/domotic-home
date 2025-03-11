@@ -21,11 +21,15 @@ else
     fi
 fi
 
+# Asegurar que los directorios existan y tengan permisos adecuados
+mkdir -p "$(dirname "$CONFIG_FILE")"
+chmod -R 777 "/app/data"
+
 # Copiar configuración de plantilla si no existe
 if [ ! -f "$CONFIG_FILE" ]; then
     echo "Configuración no encontrada, copiando plantilla..."
-    mkdir -p "$(dirname "$CONFIG_FILE")"
     cp "$CONFIG_TEMPLATE" "$CONFIG_FILE"
+    chmod 644 "$CONFIG_FILE"
 fi
 
 # Asegurarse de que estamos usando la configuración correcta de MQTT
@@ -40,6 +44,11 @@ if [ -f "$CONFIG_FILE" ]; then
     if [ ! -z "$ZIGBEE_ADAPTER_TTY" ]; then
         echo "Configurando adaptador Zigbee: $ZIGBEE_ADAPTER_TTY"
         sed -i "s|port: '\${ZIGBEE_ADAPTER_TTY}'|port: '$ZIGBEE_ADAPTER_TTY'|g" "$CONFIG_FILE"
+        
+        # Asegurar que el dispositivo tenga permisos adecuados
+        if [ -e "$ZIGBEE_ADAPTER_TTY" ]; then
+            chmod 666 "$ZIGBEE_ADAPTER_TTY"
+        fi
     fi
     
     # Configurar servidor MQTT si está definido
@@ -53,6 +62,21 @@ else
     echo "ERROR: Archivo de configuración no encontrado: $CONFIG_FILE"
     exit 1
 fi
+
+# Esperar a que el servidor MQTT esté disponible
+echo "Esperando a que el servidor MQTT esté disponible..."
+for i in $(seq 1 30); do
+    if nc -z mqtt 1883; then
+        echo "Servidor MQTT disponible, continuando..."
+        break
+    fi
+    echo "Esperando al servidor MQTT... intento $i/30"
+    sleep 2
+    if [ $i -eq 30 ]; then
+        echo "ERROR: No se pudo conectar al servidor MQTT después de 60 segundos"
+        echo "Continuando de todos modos..."
+    fi
+done
 
 echo "Iniciando Zigbee2MQTT..."
 # Ejecutar el comando original de inicio
