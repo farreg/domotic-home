@@ -20,7 +20,8 @@ services:
       - domotic
     command: /bin/bash -c "chmod +x /config/init_script.sh; /config/init_script.sh; python -m homeassistant --config /config"
     depends_on:
-      - mqtt
+      mqtt:
+        condition: service_healthy
 
   zigbee2mqtt:
     container_name: zigbee2mqtt
@@ -46,7 +47,8 @@ services:
     networks:
       - domotic
     depends_on:
-      - mqtt
+      mqtt:
+        condition: service_healthy
 
   esphome:
     container_name: esphome
@@ -75,8 +77,14 @@ services:
     restart: unless-stopped
     networks:
       - domotic
-    command: /bin/sh -c "chmod +x /init.sh && /init.sh && mosquitto -c /mqtt/config/mosquitto.conf"
     user: root
+    command: /bin/sh -c "chmod +x /init.sh && /init.sh && mosquitto -c /mqtt/config/mosquitto.conf"
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 5 mosquitto_pub -h localhost -p 1883 -t test -m test || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 networks:
   domotic:
