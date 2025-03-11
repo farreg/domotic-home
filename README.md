@@ -1,219 +1,136 @@
-# domotic-home
+# Domotic Home
 
-Un proyecto de domótica basado en Home Assistant para automatizar y controlar dispositivos en el hogar, optimizado para Raspberry Pi 4 con adaptador Sonoff Zigbee USB.
-
-## Componentes
-
-- **Home Assistant**: Plataforma principal de domótica (versión latest)
-- **Zigbee2MQTT**: Para gestionar dispositivos Zigbee a través del adaptador Sonoff
-- **ESPHome**: Para programar y gestionar dispositivos basados en ESP8266/ESP32
-- **MQTT (Mosquitto)**: Broker para comunicación entre dispositivos con autenticación segura
-- **HACS**: Home Assistant Community Store para instalar integraciones adicionales
+Sistema domótico completo basado en Home Assistant, Zigbee2MQTT, Mosquitto y ESPHome.
 
 ## Características
 
-- **Seguridad**: Autenticación MQTT, limitación de conexiones
-- **Temas personalizados**: Incluye tema oscuro predeterminado
-- **Scripts de automatización**: Instalación de HACS y detección de adaptadores Zigbee
-- **Configuración predefinida**: Ejemplos educativos de automaciones, scripts y escenas
-- **Detección automática**: Soporte para diferentes tipos de adaptadores Zigbee USB
+- **Home Assistant**: Interfaz central para gestionar todos tus dispositivos inteligentes
+- **Zigbee2MQTT**: Integración de dispositivos Zigbee
+- **Mosquitto**: Broker MQTT para comunicación entre componentes
+- **ESPHome**: Soporte para dispositivos ESP8266/ESP32 personalizados
 
 ## Requisitos
 
-- Raspberry Pi 4 (recomendado 4GB+ RAM)
-- Adaptador Sonoff Zigbee USB
 - Docker y Docker Compose
-- Variables de entorno:
-  - `HA_CONFIG_PATH`: Directorio para configuración de Home Assistant
-  - `MQTT_CONFIG_PATH`: Directorio para configuración de MQTT
-  - `MQTT_LOG_PATH`: Directorio para logs de MQTT
-  - `MQTT_DATA_PATH`: Directorio para datos de MQTT
-  - `ZIGBEE2MQTT_DATA`: Directorio para datos de Zigbee2MQTT
-  - `ESPHOME_CONFIG`: Directorio para configuración de ESPHome
-  - `HA_GITHUB_TOKEN`: Token de GitHub para HACS
-  - `MQTT_USERNAME`: Usuario para autenticación MQTT
-  - `MQTT_PASSWORD`: Contraseña para autenticación MQTT
-  - `ZIGBEE_ADAPTER_TTY`: Ruta al dispositivo del adaptador Zigbee (ej. `/dev/ttyACM0` o `/dev/ttyUSB0`)
+- Un adaptador Zigbee compatible (consulta la [lista de adaptadores compatibles](https://www.zigbee2mqtt.io/guide/adapters/))
+- Sistema Linux/macOS/Windows (Raspberry Pi recomendado)
 
 ## Instalación
 
-### Método 1: Instalación automatizada (recomendado)
+1. Clona este repositorio:
 
-1. Clonar el repositorio:
-   ```bash
-   git clone https://github.com/farreg/domotic-home.git
-   cd domotic-home
-   ```
+```bash
+git clone https://github.com/farreg/domotic-home.git
+cd domotic-home
+```
 
-2. Ejecutar el script de configuración:
-   ```bash
-   chmod +x scripts/setup.sh
-   ./scripts/setup.sh
-   ```
+2. Copia el archivo de ejemplo de variables de entorno:
 
-3. Editar el archivo `.env` con tus valores personalizados
-   ```bash
-   nano .env
-   ```
+```bash
+cp .env.example .env
+```
 
-4. Ejecutar el script de configuración nuevamente para generar los secretos:
-   ```bash
-   ./scripts/setup.sh
-   ```
+3. Edita el archivo `.env` y configura tus variables:
 
-5. Iniciar los servicios:
-   ```bash
-   docker-compose up -d
-   ```
+```bash
+# Configura la zona horaria correcta
+TZ=America/Argentina/Buenos_Aires
 
-### Método 2: Instalación manual
+# Configura la ruta del adaptador Zigbee
+ZIGBEE_ADAPTER_TTY=/dev/ttyACM0  # Cambia esto a tu puerto serial
 
-1. Clonar el repositorio:
-   ```bash
-   git clone https://github.com/farreg/domotic-home.git
-   cd domotic-home
-   ```
+# Configura las credenciales MQTT
+MQTT_USERNAME=homeassistant  # Cambia a un nombre de usuario personalizado
+MQTT_PASSWORD=mqtt_password  # Cambia a una contraseña segura
 
-2. Copiar el archivo `.env.example` a `.env` y editar con tus valores:
-   ```bash
-   cp .env.example .env
-   nano .env
-   ```
+# Opcional: Configura un token de GitHub para HACS
+# HA_GITHUB_TOKEN=tu_token_de_github
+```
 
-3. Crear la estructura de directorios:
-   ```bash
-   mkdir -p volumes/homeassistant
-   mkdir -p volumes/mosquitto/{config,log,data}
-   mkdir -p volumes/esphome
-   mkdir -p zigbee2mqtt/{data,config}
-   mkdir -p secrets
-   ```
+4. Configura los secretos (recomendado para mayor seguridad):
 
-4. Generar los archivos de secretos:
-   ```bash
-   chmod +x scripts/generate_secrets.sh
-   ./scripts/generate_secrets.sh
-   ```
+```bash
+mkdir -p secrets
+echo "homeassistant" > secrets/mqtt_username.txt  # Cambia a un nombre de usuario personalizado
+echo "mqtt_password" > secrets/mqtt_password.txt  # Cambia a una contraseña segura
+# Opcional: Para HACS
+# echo "tu_token_de_github" > secrets/ha_github_token.txt
+```
 
-5. Dar permisos de ejecución a los scripts:
-   ```bash
-   chmod +x mosquitto/scripts/init_mqtt.sh
-   chmod +x zigbee2mqtt/scripts/init_mqtt.sh
-   chmod +x homeassistant/hacs/init_script.sh
-   ```
+5. Inicia los servicios:
 
-6. Iniciar los servicios:
-   ```bash
-   docker-compose up -d
-   ```
+```bash
+docker-compose up -d
+```
 
-### Actualización
+6. Accede a las interfaces:
 
-Para actualizar la instalación existente:
+- Home Assistant: `http://tu-ip:8123`
+- Zigbee2MQTT: `http://tu-ip:8080`
+- ESPHome: `http://tu-ip:6052`
 
-1. Obtener los últimos cambios:
-   ```bash
-   git pull origin main
-   ```
+## Autenticación MQTT
 
-2. Actualizar secretos (si se han añadido nuevos):
-   ```bash
-   ./scripts/generate_secrets.sh
-   ```
+El sistema está configurado para utilizar autenticación MQTT, lo que proporciona mayor seguridad en la comunicación entre los componentes:
 
-3. Reiniciar los servicios:
-   ```bash
-   docker-compose down
-   docker-compose up -d
-   ```
+- Las credenciales se pueden configurar mediante:
+  - **Secretos** (recomendado): archivos en `./secrets/mqtt_username.txt` y `./secrets/mqtt_password.txt`
+  - **Variables de entorno**: definidas en el archivo `.env`
 
-## Seguridad
+Si no se proporcionan credenciales, el sistema funcionará en modo anónimo por defecto para facilitar la depuración, pero se recomienda configurar la autenticación para entornos de producción.
 
-Este proyecto implementa varias medidas de seguridad:
+## Directorios de Datos
 
-- **Autenticación MQTT**: Protección con usuario y contraseña
-- **Ejemplos genéricos**: Los archivos de automatizaciones, escenas y scripts contienen solo ejemplos educativos sin información personal
-- **Configuración privada**: Se recomienda crear tus automatizaciones personalizadas directamente en la interfaz de Home Assistant
+Los datos se almacenan en los siguientes directorios:
 
-Recomendaciones adicionales:
-- Usar contraseñas fuertes para MQTT
-- Cambiar regularmente las contraseñas
-- Asegurar la red donde se encuentra la Raspberry Pi
-- NO almacenar información sensible en repositorios públicos
+- Home Assistant: `./volumes/homeassistant`
+- Zigbee2MQTT: `./volumes/zigbee2mqtt`
+- Mosquitto: `./volumes/mosquitto`
+- ESPHome: `./volumes/esphome`
 
-## Gestión de datos y backups
+Puedes cambiar estas rutas en el archivo `.env`.
 
-Este repositorio está configurado para excluir datos sensibles mediante .gitignore:
+## Solución de Problemas
 
-- **Archivos de configuración**: El archivo `.env` con credenciales no se almacena en el repositorio
-- **Datos de dispositivos**: La información de dispositivos Zigbee y sus claves está excluida
-- **Logs y bases de datos**: Los archivos de registro y bases de datos están excluidos
+### Problemas con MQTT
 
-Para realizar copias de seguridad de forma segura:
+Si experimentas problemas con MQTT:
 
-1. **Configuración de Home Assistant**:
-   ```bash
-   # Copia de seguridad de configuración, excluyendo datos sensibles
-   tar --exclude='.storage' --exclude='secrets.yaml' -czvf ha_config_backup.tar.gz ./volumes/homeassistant
-   ```
+1. Verifica que las credenciales sean correctas en todos los servicios
+2. Asegúrate de que el broker Mosquitto esté funcionando: `docker logs mosquitto`
+3. Comprueba la conectividad entre servicios: `docker exec -it mosquitto mosquitto_sub -t "#" -v`
 
-2. **Backup completo desde Home Assistant**:
-   - Usa la función de "Snapshots" nativa de Home Assistant
-   - Almacena estos backups en un lugar seguro, fuera del repositorio
+### Problemas con Zigbee
 
-3. **Claves Zigbee**:
-   ```bash
-   # Copia de seguridad de datos Zigbee (importante para preservar emparejamientos)
-   tar -czvf zigbee_data_backup.tar.gz ./zigbee2mqtt/data
-   ```
+Si el adaptador Zigbee no funciona:
 
-## Recomendaciones para Raspberry Pi
+1. Verifica que el adaptador esté conectado y sea reconocido por el sistema
+2. Asegúrate de que `ZIGBEE_ADAPTER_TTY` en `.env` apunte a la ruta correcta
+3. Comprueba los permisos del dispositivo: `sudo chmod 666 /dev/ttyACM0`
 
-- Usar una tarjeta SD de alta calidad (clase 10 o superior) o preferiblemente un SSD USB
-- Asegurar que la Raspberry Pi tenga buena ventilación
-- Realizar copias de seguridad periódicas con la función de snapshots de Home Assistant
+## Respaldo y Restauración
 
-## Solución de problemas con adaptadores Zigbee
+Es recomendable realizar respaldos periódicos de los directorios de datos:
 
-Si encuentras problemas con la detección automática del adaptador Zigbee:
+```bash
+# Ejemplo de respaldo
+tar -czf backup-domotic-home.tar.gz ./volumes
+```
 
-1. **Verificar la conexión física**: Asegúrate de que el adaptador esté correctamente conectado
-2. **Identificar manualmente el adaptador**:
-   ```bash
-   ls -l /dev/ttyUSB*
-   ls -l /dev/ttyACM*
-   dmesg | grep -i tty
-   ```
-3. **Configurar manualmente**:
-   - Edita el archivo `.env` y establece `ZIGBEE_ADAPTER_TTY` a la ruta correcta
-   - Reinicia los servicios: `docker-compose down && docker-compose up -d`
-4. **Permisos de dispositivo**: Si hay problemas de acceso, asegúrate de que el usuario docker tenga permisos:
-   ```bash
-   sudo chmod 666 /dev/ttyXXX  # donde XXX es la ruta correcta
-   ```
+## Actualizaciones
 
-## Mantenimiento
+Para actualizar los servicios:
 
-Para mantener el sistema actualizado y seguro:
+```bash
+git pull
+docker-compose pull
+docker-compose up -d
+```
 
-1. Actualizar los contenedores regularmente:
-   ```bash
-   docker-compose pull
-   docker-compose up -d
-   ```
+## Licencia
 
-2. Revisar los logs periódicamente:
-   ```bash
-   docker-compose logs -f homeassistant
-   docker-compose logs -f zigbee2mqtt
-   docker-compose logs -f mqtt
-   ```
+Este proyecto está licenciado bajo la Licencia MIT.
 
-3. Monitorear el uso de recursos:
-   ```bash
-   docker stats
-   ```
+## Contribuciones
 
-4. Limpiar datos antiguos periódicamente:
-   - Usar la función de purga de historial de Home Assistant
-   - Eliminar logs antiguos de Mosquitto y Zigbee2MQTT
+Las contribuciones son bienvenidas. Por favor, envía pull requests o abre issues para sugerir mejoras.
