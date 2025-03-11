@@ -22,10 +22,15 @@ else
     fi
 fi
 
-# Crear directorios necesarios
+# Crear directorios necesarios y asegurar permisos
 mkdir -p "$CONFIG_DIR"
 mkdir -p "/mqtt/data"
 mkdir -p "/mqtt/log"
+
+# Asegurar que los directorios tengan permisos de escritura
+chmod -R 777 "$CONFIG_DIR"
+chmod -R 777 "/mqtt/data"
+chmod -R 777 "/mqtt/log"
 
 # Crear archivo de configuración
 cat > "$CONFIG_FILE" << EOL
@@ -44,15 +49,18 @@ EOL
 if [ ! -f "$PASSWD_FILE" ]; then
     echo "Creando archivo de contraseñas..."
     touch "$PASSWD_FILE"
+    chmod 600 "$PASSWD_FILE"
     mosquitto_passwd -b "$PASSWD_FILE" "$MQTT_USERNAME" "$MQTT_PASSWORD"
     echo "Archivo de contraseñas creado para el usuario $MQTT_USERNAME"
 else
     echo "Actualizando archivo de contraseñas..."
+    # Asegurar que el archivo tenga permisos de escritura
+    chmod 600 "$PASSWD_FILE"
     mosquitto_passwd -b "$PASSWD_FILE" "$MQTT_USERNAME" "$MQTT_PASSWORD"
     echo "Contraseña actualizada para el usuario $MQTT_USERNAME"
 fi
 
-# Asegurar permisos correctos
+# Asegurar permisos correctos para los archivos
 chmod 644 "$CONFIG_FILE"
 chmod 600 "$PASSWD_FILE"
 
