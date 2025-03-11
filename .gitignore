@@ -24,3 +24,19 @@ Thumbs.db
 # Datos específicos de usuarios
 HomeAssistant/secrets.yaml
 HomeAssistant/.storage/
+
+# Ignorar directorios de datos personales
+volumes/
+secrets/
+
+# Archivos generados por el sistema
+.DS_Store
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.log
+
+# Directorios específicos del proyecto
+zigbee2mqtt/data/

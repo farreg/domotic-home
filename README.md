@@ -37,31 +37,95 @@ Un proyecto de domótica basado en Home Assistant para automatizar y controlar d
 
 ## Instalación
 
-1. Clonar el repositorio
-2. Configurar las variables de entorno en un archivo `.env` (usar `.env.example` como referencia)
-3. Conectar el adaptador Sonoff Zigbee USB a la Raspberry Pi
-4. Ejecutar `docker-compose up -d`
-5. Generar el archivo de contraseñas para MQTT:
+### Método 1: Instalación automatizada (recomendado)
+
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/farreg/domotic-home.git
+   cd domotic-home
    ```
-   cd scripts
-   ./generate_mqtt_passwd.sh
-   cd ..
-   docker-compose restart mqtt
+
+2. Ejecutar el script de configuración:
+   ```bash
+   chmod +x scripts/setup.sh
+   ./scripts/setup.sh
    ```
-6. Configurar automáticamente el adaptador Zigbee:
+
+3. Editar el archivo `.env` con tus valores personalizados
+   ```bash
+   nano .env
    ```
-   cd scripts
-   ./configure_zigbee.sh
-   cd ..
+
+4. Ejecutar el script de configuración nuevamente para generar los secretos:
+   ```bash
+   ./scripts/setup.sh
+   ```
+
+5. Iniciar los servicios:
+   ```bash
+   docker-compose up -d
+   ```
+
+### Método 2: Instalación manual
+
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/farreg/domotic-home.git
+   cd domotic-home
+   ```
+
+2. Copiar el archivo `.env.example` a `.env` y editar con tus valores:
+   ```bash
+   cp .env.example .env
+   nano .env
+   ```
+
+3. Crear la estructura de directorios:
+   ```bash
+   mkdir -p volumes/homeassistant
+   mkdir -p volumes/mosquitto/{config,log,data}
+   mkdir -p volumes/esphome
+   mkdir -p zigbee2mqtt/{data,config}
+   mkdir -p secrets
+   ```
+
+4. Generar los archivos de secretos:
+   ```bash
+   chmod +x scripts/generate_secrets.sh
+   ./scripts/generate_secrets.sh
+   ```
+
+5. Dar permisos de ejecución a los scripts:
+   ```bash
+   chmod +x mosquitto/scripts/init_mqtt.sh
+   chmod +x zigbee2mqtt/scripts/init_mqtt.sh
+   chmod +x homeassistant/hacs/init_script.sh
+   ```
+
+6. Iniciar los servicios:
+   ```bash
+   docker-compose up -d
+   ```
+
+### Actualización
+
+Para actualizar la instalación existente:
+
+1. Obtener los últimos cambios:
+   ```bash
+   git pull origin main
+   ```
+
+2. Actualizar secretos (si se han añadido nuevos):
+   ```bash
+   ./scripts/generate_secrets.sh
+   ```
+
+3. Reiniciar los servicios:
+   ```bash
    docker-compose down
    docker-compose up -d
    ```
-   Este script detectará automáticamente tu adaptador Zigbee y configurará la variable `ZIGBEE_ADAPTER_TTY` en el archivo `.env`.
-
-7. Acceder a los servicios:
-   - Home Assistant: `http://[IP-RASPBERRY]:8123`
-   - Zigbee2MQTT: `http://[IP-RASPBERRY]:8080`
-   - ESPHome: `http://[IP-RASPBERRY]:6052`
 
 ## Seguridad
 

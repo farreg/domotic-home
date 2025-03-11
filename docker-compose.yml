@@ -1,17 +1,19 @@
-version: '3'
+version: '3.8'
 services:
   homeassistant:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:latest"
     volumes:
-      - ${HA_CONFIG_PATH}:/config
+      - ${HA_CONFIG_PATH:-./volumes/homeassistant}:/config
       - /etc/localtime:/etc/localtime:ro
       - ./homeassistant/hacs/init_script.sh:/config/init_script.sh
     environment:
-      - TZ=America/Argentina/Buenos_Aires
+      - TZ=${TZ:-America/Argentina/Buenos_Aires}
       - PYTHONUNBUFFERED=1
-      - MQTT_USERNAME=${MQTT_USERNAME}
-      - MQTT_PASSWORD=${MQTT_PASSWORD}
+    secrets:
+      - mqtt_username
+      - mqtt_password
+      - ha_github_token
     restart: unless-stopped
     privileged: true
     networks:
@@ -23,18 +25,19 @@ services:
     image: koenkk/zigbee2mqtt:1.28.4
     restart: unless-stopped
     volumes:
-      - ${ZIGBEE2MQTT_DATA}:/app/data
+      - ${ZIGBEE2MQTT_DATA:-./volumes/zigbee2mqtt}:/app/data
       - /run/udev:/run/udev:ro
       - ./zigbee2mqtt/scripts/init_mqtt.sh:/init_mqtt.sh
-      - ./zigbee2mqtt/config:/app/data
+      - ./zigbee2mqtt/config:/app/config
     ports:
       - "8080:8080"
     environment:
-      - TZ=America/Argentina/Buenos_Aires
-      - MQTT_USERNAME=${MQTT_USERNAME}
-      - MQTT_PASSWORD=${MQTT_PASSWORD}
+      - TZ=${TZ:-America/Argentina/Buenos_Aires}
       - ZIGBEE_ADAPTER_TTY=${ZIGBEE_ADAPTER_TTY:-/dev/ttyACM0}
       - MQTT_SERVER=mqtt://mqtt:1883
+    secrets:
+      - mqtt_username
+      - mqtt_password
     devices:
       - ${ZIGBEE_ADAPTER_TTY:-/dev/ttyACM0}:${ZIGBEE_ADAPTER_TTY:-/dev/ttyACM0}
     command: ["/bin/sh", "/init_mqtt.sh"]
@@ -47,7 +50,7 @@ services:
     container_name: esphome
     image: ghcr.io/esphome/esphome:latest
     volumes:
-      - ${ESPHOME_CONFIG}:/config
+      - ${ESPHOME_CONFIG:-./volumes/esphome}:/config
     restart: unless-stopped
     privileged: true
     networks:
@@ -60,13 +63,13 @@ services:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - ${MQTT_CONFIG_PATH}:/mqtt/config
-      - ${MQTT_LOG_PATH}:/mqtt/log
-      - ${MQTT_DATA_PATH}:/mqtt/data
+      - ${MQTT_CONFIG_PATH:-./volumes/mosquitto/config}:/mqtt/config
+      - ${MQTT_LOG_PATH:-./volumes/mosquitto/log}:/mqtt/log
+      - ${MQTT_DATA_PATH:-./volumes/mosquitto/data}:/mqtt/data
       - ./mosquitto/scripts/init_mqtt.sh:/init.sh
-    environment:
-      - MQTT_USERNAME=${MQTT_USERNAME}
-      - MQTT_PASSWORD=${MQTT_PASSWORD}
+    secrets:
+      - mqtt_username
+      - mqtt_password
     restart: unless-stopped
     networks:
       - domotic
@@ -76,3 +79,11 @@ networks:
   domotic:
     name: domotic
     driver: bridge
+
+secrets:
+  mqtt_username:
+    file: ./secrets/mqtt_username.txt
+  mqtt_password:
+    file: ./secrets/mqtt_password.txt
+  ha_github_token:
+    file: ./secrets/ha_github_token.txt
