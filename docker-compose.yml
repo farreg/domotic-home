@@ -19,6 +19,8 @@ services:
     networks:
       - domotic
     command: /bin/bash -c "chmod +x /config/init_script.sh; /config/init_script.sh; python -m homeassistant --config /config"
+    depends_on:
+      - mqtt
 
   zigbee2mqtt:
     container_name: zigbee2mqtt
@@ -74,6 +76,7 @@ services:
     networks:
       - domotic
     command: /bin/sh -c "chmod +x /init.sh && /init.sh && mosquitto -c /mqtt/config/mosquitto.conf"
+    user: root
 
 networks:
   domotic:
