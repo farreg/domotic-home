@@ -25,6 +25,7 @@ services:
     volumes:
       - ${ZIGBEE2MQTT_DATA}:/app/data
       - /run/udev:/run/udev:ro
+      - ./zigbee2mqtt/scripts/init_mqtt.sh:/init_mqtt.sh
     ports:
       - "8080:8080"
     environment:
@@ -32,8 +33,10 @@ services:
       - MQTT_USERNAME=${MQTT_USERNAME}
       - MQTT_PASSWORD=${MQTT_PASSWORD}
       - ZIGBEE_ADAPTER_TTY=${ZIGBEE_ADAPTER_TTY:-/dev/ttyACM0}
+      - MQTT_SERVER=mqtt://mqtt:1883
     devices:
       - ${ZIGBEE_ADAPTER_TTY:-/dev/ttyACM0}:${ZIGBEE_ADAPTER_TTY:-/dev/ttyACM0}
+    entrypoint: ["/bin/bash", "/init_mqtt.sh", "docker-entrypoint.sh"]
     depends_on:
       - mqtt
 
