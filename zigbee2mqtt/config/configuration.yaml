@@ -7,7 +7,7 @@ mqtt:
   password: "${MQTT_PASSWORD}"
 serial:
   port: "${ZIGBEE_ADAPTER_TTY:-/dev/ttyACM0}"
-  adapter: ezsp
+  adapter: ember
 frontend:
   port: 8080
 advanced:
