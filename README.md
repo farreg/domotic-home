@@ -1,18 +1,18 @@
 # Domotic Home
 
-Sistema domótico completo basado en Home Assistant, Zigbee2MQTT, Mosquitto y ESPHome.
+Sistema domótico completo basado en Home Assistant, ZHA (Zigbee Home Automation), Mosquitto y ESPHome.
 
 ## Características
 
 - **Home Assistant**: Interfaz central para gestionar todos tus dispositivos inteligentes
-- **Zigbee2MQTT**: Integración de dispositivos Zigbee
+- **ZHA (Zigbee Home Automation)**: Integración nativa de dispositivos Zigbee en Home Assistant
 - **Mosquitto**: Broker MQTT para comunicación entre componentes
 - **ESPHome**: Soporte para dispositivos ESP8266/ESP32 personalizados
 
 ## Requisitos
 
 - Docker y Docker Compose
-- Un adaptador Zigbee compatible (consulta la [lista de adaptadores compatibles](https://www.zigbee2mqtt.io/guide/adapters/))
+- Un adaptador Zigbee compatible (consulta la [lista de adaptadores compatibles](https://www.home-assistant.io/integrations/zha/#known-working-zigbee-radio-modules))
 - Sistema Linux/macOS/Windows (Raspberry Pi recomendado)
 
 ## Instalación
@@ -35,9 +35,6 @@ cp .env.example .env
 ```bash
 # Configura la zona horaria correcta
 TZ=America/Argentina/Buenos_Aires
-
-# Configura la ruta del adaptador Zigbee
-ZIGBEE_ADAPTER_TTY=/dev/ttyACM0  # Cambia esto a tu puerto serial
 
 # Configura las credenciales MQTT
 MQTT_USERNAME=homeassistant  # Cambia a un nombre de usuario personalizado
@@ -66,8 +63,11 @@ docker-compose up -d
 6. Accede a las interfaces:
 
 - Home Assistant: `http://tu-ip:8123`
-- Zigbee2MQTT: `http://tu-ip:8080`
 - ESPHome: `http://tu-ip:6052`
+
+7. Configurar ZHA en Home Assistant:
+
+Después de iniciar Home Assistant, ve a "Configuración" -> "Dispositivos y servicios" -> "Añadir integración" y busca "ZHA". Sigue el asistente de configuración y selecciona tu adaptador Zigbee conectado al sistema.
 
 ## Autenticación MQTT
 
@@ -84,7 +84,6 @@ Si no se proporcionan credenciales, el sistema funcionará en modo anónimo por 
 Los datos se almacenan en los siguientes directorios:
 
 - Home Assistant: `./volumes/homeassistant`
-- Zigbee2MQTT: `./volumes/zigbee2mqtt`
 - Mosquitto: `./volumes/mosquitto`
 - ESPHome: `./volumes/esphome`
 
@@ -100,13 +99,14 @@ Si experimentas problemas con MQTT:
 2. Asegúrate de que el broker Mosquitto esté funcionando: `docker logs mosquitto`
 3. Comprueba la conectividad entre servicios: `docker exec -it mosquitto mosquitto_sub -t "#" -v`
 
-### Problemas con Zigbee
+### Problemas con Zigbee (ZHA)
 
-Si el adaptador Zigbee no funciona:
+Si el adaptador Zigbee no funciona con ZHA:
 
 1. Verifica que el adaptador esté conectado y sea reconocido por el sistema
-2. Asegúrate de que `ZIGBEE_ADAPTER_TTY` en `.env` apunte a la ruta correcta
-3. Comprueba los permisos del dispositivo: `sudo chmod 666 /dev/ttyACM0`
+2. Comprueba que Home Assistant tenga acceso al dispositivo (el contenedor está configurado con montaje de `/dev` y `privileged: true`)
+3. Comprueba los permisos del dispositivo: `sudo chmod 666 /dev/ttyACM0` (o el puerto correspondiente)
+4. Verifica que el adaptador sea compatible con ZHA
 
 ## Respaldo y Restauración
 
