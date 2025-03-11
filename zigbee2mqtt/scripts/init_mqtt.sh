@@ -15,9 +15,8 @@ else
     # Fallback a variables de entorno si los secretos no están disponibles
     echo "Secretos no encontrados, usando variables de entorno"
     if [ -z "$MQTT_USERNAME" ] || [ -z "$MQTT_PASSWORD" ]; then
-        echo "ERROR: Variables MQTT_USERNAME y MQTT_PASSWORD no definidas"
-        echo "Por favor, crea el archivo de secretos en ./secrets/ o define las variables de entorno"
-        exit 1
+        echo "ADVERTENCIA: Variables MQTT_USERNAME y MQTT_PASSWORD no definidas"
+        echo "La autenticación MQTT puede fallar si el servidor requiere credenciales"
     fi
 fi
 
@@ -32,13 +31,36 @@ if [ ! -f "$CONFIG_FILE" ]; then
     chmod 644 "$CONFIG_FILE"
 fi
 
+# Esperar a que el servidor MQTT esté disponible
+echo "Esperando a que el servidor MQTT esté disponible..."
+for i in $(seq 1 30); do
+    if nc -z mqtt 1883; then
+        echo "Servidor MQTT disponible, continuando..."
+        break
+    fi
+    echo "Esperando al servidor MQTT... intento $i/30"
+    sleep 3
+    if [ $i -eq 30 ]; then
+        echo "ERROR: No se pudo conectar al servidor MQTT después de 90 segundos"
+        echo "Continuando de todos modos, pero puede fallar la conexión MQTT"
+    fi
+done
+
 # Asegurarse de que estamos usando la configuración correcta de MQTT
 if [ -f "$CONFIG_FILE" ]; then
     echo "Actualizando configuración MQTT..."
     
     # Reemplazar las variables en el archivo de configuración
-    sed -i "s/user: '\${MQTT_USERNAME}'/user: '$MQTT_USERNAME'/g" "$CONFIG_FILE"
-    sed -i "s/password: '\${MQTT_PASSWORD}'/password: '$MQTT_PASSWORD'/g" "$CONFIG_FILE"
+    if [ ! -z "$MQTT_USERNAME" ] && [ ! -z "$MQTT_PASSWORD" ]; then
+        sed -i "s/user: '\${MQTT_USERNAME}'/user: '$MQTT_USERNAME'/g" "$CONFIG_FILE"
+        sed -i "s/password: '\${MQTT_PASSWORD}'/password: '$MQTT_PASSWORD'/g" "$CONFIG_FILE"
+        echo "Credenciales MQTT configuradas"
+    else
+        # Si no hay credenciales, asegurarse de que la configuración sea compatible
+        grep -q "user:" "$CONFIG_FILE" && sed -i "/user:/d" "$CONFIG_FILE"
+        grep -q "password:" "$CONFIG_FILE" && sed -i "/password:/d" "$CONFIG_FILE"
+        echo "Configuración MQTT sin autenticación"
+    fi
     
     # Reemplazar la ruta del adaptador si está definida
     if [ ! -z "$ZIGBEE_ADAPTER_TTY" ]; then
@@ -48,6 +70,9 @@ if [ -f "$CONFIG_FILE" ]; then
         # Asegurar que el dispositivo tenga permisos adecuados
         if [ -e "$ZIGBEE_ADAPTER_TTY" ]; then
             chmod 666 "$ZIGBEE_ADAPTER_TTY"
+            echo "Permisos aplicados al adaptador Zigbee"
+        else
+            echo "ADVERTENCIA: El adaptador Zigbee no está disponible en $ZIGBEE_ADAPTER_TTY"
         fi
     fi
     
@@ -62,21 +87,6 @@ else
     echo "ERROR: Archivo de configuración no encontrado: $CONFIG_FILE"
     exit 1
 fi
-
-# Esperar a que el servidor MQTT esté disponible
-echo "Esperando a que el servidor MQTT esté disponible..."
-for i in $(seq 1 30); do
-    if nc -z mqtt 1883; then
-        echo "Servidor MQTT disponible, continuando..."
-        break
-    fi
-    echo "Esperando al servidor MQTT... intento $i/30"
-    sleep 2
-    if [ $i -eq 30 ]; then
-        echo "ERROR: No se pudo conectar al servidor MQTT después de 60 segundos"
-        echo "Continuando de todos modos..."
-    fi
-done
 
 echo "Iniciando Zigbee2MQTT..."
 # Ejecutar el comando original de inicio
