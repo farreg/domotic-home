@@ -7,7 +7,6 @@ services:
       - ${HA_CONFIG_PATH}:/config
       - /etc/localtime:/etc/localtime:ro
       - ./homeassistant/hacs/init_script.sh:/config/init_script.sh
-      
     environment:
       - TZ=America/Argentina/Buenos_Aires
       - PYTHONUNBUFFERED=1
@@ -27,6 +26,7 @@ services:
       - ${ZIGBEE2MQTT_DATA}:/app/data
       - /run/udev:/run/udev:ro
       - ./zigbee2mqtt/scripts/init_mqtt.sh:/init_mqtt.sh
+      - ./zigbee2mqtt/config:/app/data
     ports:
       - "8080:8080"
     environment:
@@ -63,9 +63,14 @@ services:
       - ${MQTT_CONFIG_PATH}:/mqtt/config
       - ${MQTT_LOG_PATH}:/mqtt/log
       - ${MQTT_DATA_PATH}:/mqtt/data
+      - ./mosquitto/scripts/init_mqtt.sh:/init.sh
+    environment:
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
     restart: unless-stopped
     networks:
       - domotic
+    command: /bin/sh -c "chmod +x /init.sh && /init.sh && mosquitto -c /mqtt/config/mosquitto.conf"
 
 networks:
   domotic:
