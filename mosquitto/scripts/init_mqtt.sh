@@ -4,6 +4,8 @@
 CONFIG_DIR="/mqtt/config"
 CONFIG_FILE="$CONFIG_DIR/mosquitto.conf"
 PASSWD_FILE="$CONFIG_DIR/passwd"
+LOG_DIR="/mqtt/log"
+DATA_DIR="/mqtt/data"
 
 echo "Iniciando configuración de Mosquitto..."
 
@@ -24,13 +26,13 @@ fi
 
 # Crear directorios necesarios y asegurar permisos
 mkdir -p "$CONFIG_DIR"
-mkdir -p "/mqtt/data"
-mkdir -p "/mqtt/log"
+mkdir -p "$DATA_DIR"
+mkdir -p "$LOG_DIR"
 
 # Asegurar que los directorios tengan permisos de escritura
 chmod -R 777 "$CONFIG_DIR"
-chmod -R 777 "/mqtt/data"
-chmod -R 777 "/mqtt/log"
+chmod -R 777 "$DATA_DIR"
+chmod -R 777 "$LOG_DIR"
 
 # Crear archivo de configuración
 cat > "$CONFIG_FILE" << EOL
@@ -39,29 +41,40 @@ allow_anonymous false
 password_file $PASSWD_FILE
 
 persistence true
-persistence_location /mqtt/data/
+persistence_location $DATA_DIR/
 
-log_dest file /mqtt/log/mosquitto.log
+log_dest file $LOG_DIR/mosquitto.log
 log_dest stdout
 EOL
 
-# Crear archivo de contraseñas si no existe
-if [ ! -f "$PASSWD_FILE" ]; then
-    echo "Creando archivo de contraseñas..."
-    touch "$PASSWD_FILE"
-    chmod 600 "$PASSWD_FILE"
-    mosquitto_passwd -b "$PASSWD_FILE" "$MQTT_USERNAME" "$MQTT_PASSWORD"
-    echo "Archivo de contraseñas creado para el usuario $MQTT_USERNAME"
-else
-    echo "Actualizando archivo de contraseñas..."
-    # Asegurar que el archivo tenga permisos de escritura
-    chmod 600 "$PASSWD_FILE"
-    mosquitto_passwd -b "$PASSWD_FILE" "$MQTT_USERNAME" "$MQTT_PASSWORD"
-    echo "Contraseña actualizada para el usuario $MQTT_USERNAME"
+# Asegurar permisos correctos para el archivo de configuración
+chmod 644 "$CONFIG_FILE"
+
+# Crear archivo de contraseñas
+echo "Creando archivo de contraseñas..."
+touch "$PASSWD_FILE"
+chmod 600 "$PASSWD_FILE"
+
+# Añadir usuario y contraseña
+echo "Actualizando archivo de contraseñas..."
+mosquitto_passwd -b "$PASSWD_FILE" "$MQTT_USERNAME" "$MQTT_PASSWORD"
+echo "Contraseña actualizada para el usuario $MQTT_USERNAME"
+
+# Verificar que el archivo de contraseñas existe y tiene el contenido correcto
+if [ ! -s "$PASSWD_FILE" ]; then
+    echo "ERROR: El archivo de contraseñas está vacío o no se pudo crear"
+    # Crear manualmente el archivo de contraseñas con un formato básico
+    echo "$MQTT_USERNAME:$MQTT_PASSWORD" > "$PASSWD_FILE"
+    echo "Creado archivo de contraseñas básico como fallback"
 fi
 
 # Asegurar permisos correctos para los archivos
 chmod 644 "$CONFIG_FILE"
 chmod 600 "$PASSWD_FILE"
+
+# Verificar permisos
+ls -la "$CONFIG_DIR"
+ls -la "$LOG_DIR"
+ls -la "$DATA_DIR"
 
 echo "Configuración de Mosquitto completada." 
