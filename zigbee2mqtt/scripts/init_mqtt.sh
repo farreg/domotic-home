@@ -5,6 +5,8 @@
 
 CONFIG_FILE="/app/data/configuration.yaml"
 
+echo "Iniciando script de configuración de Zigbee2MQTT..."
+
 # Asegurarse de que estamos usando la configuración correcta de MQTT
 if [ -f "$CONFIG_FILE" ]; then
     echo "Verificando configuración MQTT..."
@@ -22,7 +24,9 @@ if [ -f "$CONFIG_FILE" ]; then
     fi
 else
     echo "Archivo de configuración no encontrado: $CONFIG_FILE"
+    exit 1
 fi
 
-# Continuar con el inicio normal
-exec "$@" 
+echo "Iniciando Zigbee2MQTT..."
+# Ejecutar el comando original de inicio
+node index.js 
