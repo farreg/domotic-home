@@ -63,9 +63,9 @@ services:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - ${MQTT_CONFIG_PATH:-./volumes/mosquitto/config}:/mqtt/config
-      - ${MQTT_LOG_PATH:-./volumes/mosquitto/log}:/mqtt/log
-      - ${MQTT_DATA_PATH:-./volumes/mosquitto/data}:/mqtt/data
+      - ./volumes/mosquitto/config:/mqtt/config
+      - ./volumes/mosquitto/log:/mqtt/log
+      - ./volumes/mosquitto/data:/mqtt/data
       - ./mosquitto/scripts/init_mqtt.sh:/init.sh
     secrets:
       - mqtt_username
