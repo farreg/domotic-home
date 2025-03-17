@@ -64,6 +64,28 @@ services:
       retries: 5
       start_period: 10s
 
+  ring-mqtt:
+    container_name: ring-mqtt
+    image: tsightler/ring-mqtt:latest
+    volumes:
+      - ./volumes/ring-mqtt/config:/config
+    environment:
+      - TZ=${TZ:-America/Argentina/Buenos_Aires}
+      - MQTT_HOST=mosquitto
+      - MQTT_PORT=1883
+      - MQTT_USERNAME=${MQTT_USERNAME:-}
+      - MQTT_PASSWORD=${MQTT_PASSWORD:-}
+      - RING_TOKEN=${RING_TOKEN:-}
+      - RING_LOCATION_ID=${RING_LOCATION_ID:-}
+      - RING_DEVICE_ID=${RING_DEVICE_ID:-}
+      - RING_REFRESH_TOKEN=${RING_REFRESH_TOKEN:-}
+    restart: unless-stopped
+    networks:
+      - domotic
+    depends_on:
+      mqtt:
+        condition: service_healthy
+
 networks:
   domotic:
     name: domotic
